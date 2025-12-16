@@ -45,27 +45,27 @@ export class AuthService {
   }
 
   /**
-   * TODO: VULNERABILITY SQL Injection in login endpoint
+   * TODO: VULNERABILITY SQL Injection in login endpoint - Complete Authentication Bypass
    * 
-   * This method uses unsafe string interpolation in the email field.
-   * While password verification uses bcrypt, the email field is vulnerable to SQL injection.
+   * This method uses unsafe string interpolation for BOTH email and password,
+   * allowing complete authentication bypass without knowing any credentials.
    * 
    * Exploit examples:
-   * - email: "admin@example.com'--" (comment out password check)
-   * - email: "' OR '1'='1'--" (bypass login for first user)
-   * - email: "' UNION SELECT id, email, password, role, created_at FROM users WHERE email='admin@example.com'--"
+   * - email: "admin@example.com'--" password: "anything" (comment out password check)
+   * - email: "' OR '1'='1'--" password: "anything" (login as first user)
+   * - email: "' OR email='admin@example.com'--" password: "anything" (login as admin)
    * 
    * Safe version would use:
    * const user = this.db.queryOne<User>(
-   *   'SELECT * FROM users WHERE email = ?',
-   *   [email]
+   *   'SELECT * FROM users WHERE email = ? AND password = ?',
+   *   [email, hashedPassword]
    * );
    */
   async login({ email, password }: LoginDto): Promise<UserEntity> {
-    const query = `SELECT * FROM users WHERE email = '${email}'`;
+    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
     const user = this.db.queryOne<User>(query);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 

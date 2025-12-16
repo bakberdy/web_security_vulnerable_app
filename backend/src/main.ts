@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import Database from 'better-sqlite3';
@@ -57,8 +58,34 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
+  const config = new DocumentBuilder()
+    .setTitle('Vulnerable Task Platform API')
+    .setDescription(
+      '⚠️ INTENTIONALLY VULNERABLE API for educational purposes.\n\n' +
+        'This API contains documented security vulnerabilities:\n' +
+        '- SQL Injection in login endpoint\n' +
+        '- And more vulnerabilities coming in Phase 3+\n\n' +
+        '🚫 DO NOT use in production or with real data.',
+    )
+    .setVersion('1.0')
+    .addTag('auth', 'Authentication endpoints')
+    .addTag('users', 'User management')
+    .addCookieAuth('connect.sid', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'connect.sid',
+    })
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    customSiteTitle: '⚠️ Vulnerable API Docs',
+    customCss: '.swagger-ui .topbar { background-color: #dc2626; }',
+  });
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}/api`);
+  console.log(`📚 Swagger API docs: http://localhost:${port}/api/docs`);
 }
 bootstrap();

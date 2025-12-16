@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const express_session_1 = __importDefault(require("express-session"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const better_sqlite3_1 = __importDefault(require("better-sqlite3"));
@@ -80,9 +81,31 @@ async function bootstrap() {
         transform: true,
     }));
     app.setGlobalPrefix('api');
+    const config = new swagger_1.DocumentBuilder()
+        .setTitle('Vulnerable Task Platform API')
+        .setDescription('⚠️ INTENTIONALLY VULNERABLE API for educational purposes.\n\n' +
+        'This API contains documented security vulnerabilities:\n' +
+        '- SQL Injection in login endpoint\n' +
+        '- And more vulnerabilities coming in Phase 3+\n\n' +
+        '🚫 DO NOT use in production or with real data.')
+        .setVersion('1.0')
+        .addTag('auth', 'Authentication endpoints')
+        .addTag('users', 'User management')
+        .addCookieAuth('connect.sid', {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'connect.sid',
+    })
+        .build();
+    const document = swagger_1.SwaggerModule.createDocument(app, config);
+    swagger_1.SwaggerModule.setup('api/docs', app, document, {
+        customSiteTitle: '⚠️ Vulnerable API Docs',
+        customCss: '.swagger-ui .topbar { background-color: #dc2626; }',
+    });
     const port = process.env.PORT || 3000;
     await app.listen(port);
     console.log(`Application is running on: http://localhost:${port}/api`);
+    console.log(`📚 Swagger API docs: http://localhost:${port}/api/docs`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

@@ -70,9 +70,9 @@ let AuthService = class AuthService {
         };
     }
     async login({ email, password }) {
-        const query = `SELECT * FROM users WHERE email = '${email}'`;
+        const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
         const user = this.db.queryOne(query);
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
         return {
