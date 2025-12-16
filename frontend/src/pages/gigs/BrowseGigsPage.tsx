@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { GigFilters } from '@/entities/gig';
 import { GigSearchBar, GigCard, useSearchGigs } from '@/features/gigs';
-import { Loading, Alert } from '@/shared/ui';
+import { Loading, Alert, Container } from '@/shared/ui';
 
 export function BrowseGigsPage() {
   const [filters, setFilters] = useState<GigFilters>({});
@@ -12,8 +12,7 @@ export function BrowseGigsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Browse Gigs
@@ -46,7 +45,6 @@ export function BrowseGigsPage() {
             )}
           </div>
         )}
-      </div>
-    </div>
+      </Container>
   );
 }

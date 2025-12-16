@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { clsx } from 'clsx'
 import { Button } from '../Button'
 
@@ -38,13 +38,14 @@ export function Header({
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const location = useLocation()
 
   const isAuthenticated = !!userName
 
   return (
-    <header className={clsx('bg-white border-b border-gray-200', className)}>
+    <header className={clsx('sticky top-0 z-40 border-b border-white/40 bg-white/85 backdrop-blur-xl', className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
@@ -57,16 +58,24 @@ export function Header({
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-2 rounded-full bg-white/60 px-2 py-1 shadow-sm ring-1 ring-gray-100 backdrop-blur">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href || location.pathname.startsWith(`${link.href}/`)
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={clsx(
+                    'px-3 py-2 text-sm font-semibold transition-all rounded-full',
+                    isActive
+                      ? 'bg-primary-600 text-white shadow'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  )}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Desktop Auth / User Menu */}
@@ -75,20 +84,20 @@ export function Header({
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                  className="group flex items-center gap-2 rounded-full bg-white/70 px-2 py-1 pl-1 pr-3 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-100 backdrop-blur transition"
                 >
                   {userAvatar ? (
                     <img
                       src={userAvatar}
                       alt={userName}
-                      className="w-8 h-8 rounded-full"
+                      className="h-9 w-9 rounded-full object-cover ring-2 ring-white"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-medium">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-primary-600 ring-2 ring-white">
                       {userName?.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <span className="text-gray-700 font-medium">{userName}</span>
+                  <span className="text-gray-900">{userName}</span>
                   <svg
                     className={clsx(
                       'w-4 h-4 text-gray-500 transition-transform',
@@ -110,10 +119,10 @@ export function Header({
                 {isUserMenuOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-10"
+                      className="fixed inset-0 z-30"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                    <div className="absolute right-0 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-xl ring-1 ring-black/5 z-50">
                       {userMenu.map((item, index) => (
                         <button
                           key={index}
@@ -137,10 +146,10 @@ export function Header({
               </div>
             ) : (
               <>
-                <Button variant="ghost" onClick={onLogin}>
+                <Button variant="ghost" onClick={onLogin} className="text-sm font-semibold">
                   Login
                 </Button>
-                <Button variant="primary" onClick={onRegister}>
+                <Button variant="primary" onClick={onRegister} className="text-sm font-semibold shadow-sm">
                   Sign Up
                 </Button>
               </>
@@ -150,10 +159,10 @@ export function Header({
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+            className="md:hidden rounded-full p-2 text-gray-700 hover:bg-white/80 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <svg
-              className="w-6 h-6"
+              className="h-6 w-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -180,14 +189,14 @@ export function Header({
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200">
+        <div className="md:hidden border-t border-gray-200 bg-white/90 backdrop-blur">
           <nav className="px-4 py-4 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 font-medium"
+                className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-800 transition hover:bg-gray-100"
               >
                 {link.label}
               </Link>

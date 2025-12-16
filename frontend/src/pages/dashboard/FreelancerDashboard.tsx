@@ -5,7 +5,7 @@ import { apiClient } from '@/shared/api/client';
 import type { Order } from '@/entities/order';
 import type { Gig } from '@/entities/gig';
 import type { UserStats } from '@/shared/types';
-import { Button } from '@/shared/ui';
+import { Button, Container, Grid } from '@/shared/ui';
 import { useAuth } from '@/app/providers/AuthProvider';
 
 export function FreelancerDashboard() {
@@ -27,7 +27,7 @@ export function FreelancerDashboard() {
         apiClient.get('/orders/my-orders'),
         apiClient.get('/gigs/my-gigs'),
       ]);
-      
+
       setStats(statsRes.data);
       setOrders(ordersRes.data.filter((o: Order) => o.status !== 'completed' && o.status !== 'cancelled'));
       setGigs(gigsRes.data);
@@ -60,8 +60,7 @@ export function FreelancerDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <Container className="py-8">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Freelancer Dashboard</h1>
@@ -72,35 +71,23 @@ export function FreelancerDashboard() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Grid cols={4} gap={6} className="mb-8">
           <StatsCard
             title="Total Earnings"
             value={`$${stats?.total_earned || 0}`}
             icon="💰"
             trend={{ value: 12.5, isPositive: true }}
           />
-          <StatsCard
-            title="Active Orders"
-            value={orders.length}
-            icon="📦"
-          />
-          <StatsCard
-            title="Completed Jobs"
-            value={stats?.completed_jobs || 0}
-            icon="✅"
-          />
-          <StatsCard
-            title="Rating"
-            value={`${stats?.rating || 0}/5`}
-            icon="⭐"
-          />
-        </div>
+          <StatsCard title="Active Orders" value={orders.length} icon="📦" />
+          <StatsCard title="Completed Jobs" value={stats?.completed_jobs || 0} icon="✅" />
+          <StatsCard title="Rating" value={`${stats?.rating || 0}/5`} icon="⭐" />
+        </Grid>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2">
+        <Grid cols={3} gap={6} className="mb-8">
+          <div className="lg:col-span-2 col-span-3">
             <RevenueChart data={revenueData} />
           </div>
-          <div>
+          <div className="col-span-3 lg:col-span-1">
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
@@ -125,11 +112,11 @@ export function FreelancerDashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </Grid>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Grid cols={2} gap={6}>
           <ActiveOrdersList orders={orders} userRole="freelancer" />
-          
+
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">My Gigs</h3>
@@ -157,11 +144,15 @@ export function FreelancerDashboard() {
                           <span>{gig.delivery_days} days</span>
                         </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        gig.status === 'active' ? 'bg-green-100 text-green-800' :
-                        gig.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          gig.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : gig.status === 'paused'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {gig.status}
                       </span>
                     </div>
@@ -170,8 +161,7 @@ export function FreelancerDashboard() {
               </div>
             )}
           </div>
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Container>
   );
 }

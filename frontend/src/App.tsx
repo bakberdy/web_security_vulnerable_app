@@ -11,6 +11,7 @@ import { OrderDetailPage } from './pages/orders';
 import { SubmitProposalPage, ProposalListPage } from './pages/proposals';
 import { MessagesPage } from './pages/messages';
 import { Loading } from './shared/ui';
+import { ProtectedLayout } from './app/layouts/ProtectedLayout';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,6 +21,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+}
+
+function ProtectedOutlet() {
+  return (
+    <ProtectedRoute>
+      <ProtectedLayout />
+    </ProtectedRoute>
+  );
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
@@ -45,14 +54,19 @@ function App() {
       <AuthProvider>
         <ToastProvider position="top-right">
           <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<ProtectedOutlet />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/gigs" element={<BrowseGigsPage />} />
+            <Route path="/gigs/:id" element={<GigDetailPage />} />
+            <Route path="/projects" element={<BrowseProjectsPage />} />
+            <Route path="/projects/:id" element={<ProjectDetailPage />} />
+            <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
+            <Route path="/dashboard/client" element={<ClientDashboard />} />
+            <Route path="/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/proposals/submit" element={<SubmitProposalPage />} />
+            <Route path="/proposals/project/:projectId" element={<ProposalListPage />} />
+            <Route path="/messages" element={<MessagesPage />} />
+          </Route>
           <Route
             path="/login"
             element={
@@ -67,86 +81,6 @@ function App() {
               <PublicRoute>
                 <RegisterPage />
               </PublicRoute>
-            }
-          />
-          <Route
-            path="/gigs"
-            element={
-              <ProtectedRoute>
-                <BrowseGigsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/gigs/:id"
-            element={
-              <ProtectedRoute>
-                <GigDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/projects"
-            element={
-              <ProtectedRoute>
-                <BrowseProjectsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/projects/:id"
-            element={
-              <ProtectedRoute>
-                <ProjectDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/freelancer"
-            element={
-              <ProtectedRoute>
-                <FreelancerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/client"
-            element={
-              <ProtectedRoute>
-                <ClientDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders/:id"
-            element={
-              <ProtectedRoute>
-                <OrderDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/proposals/submit"
-            element={
-              <ProtectedRoute>
-                <SubmitProposalPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/proposals/project/:projectId"
-            element={
-              <ProtectedRoute>
-                <ProposalListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/messages"
-            element={
-              <ProtectedRoute>
-                <MessagesPage />
-              </ProtectedRoute>
             }
           />
         </Routes>

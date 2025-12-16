@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProjectDetails } from '@/features/projects';
-import { Loading, Alert, Button, Card } from '@/shared/ui';
+import { Loading, Alert, Button, Card, Container } from '@/shared/ui';
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -10,20 +10,25 @@ export function ProjectDetailPage() {
   const { project, isLoading, error } = useProjectDetails(projectId);
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <Container className="py-8">
+        <Loading />
+      </Container>
+    );
   }
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Alert variant="error">{error || 'Project not found'}</Alert>
-      </div>
+      <Container className="py-8">
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Alert variant="error">{error || 'Project not found'}</Alert>
+        </div>
+      </Container>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
         <Button
           variant="secondary"
           onClick={() => navigate('/projects')}
@@ -85,7 +90,6 @@ export function ProjectDetailPage() {
             </div>
           )}
         </Card>
-      </div>
-    </div>
+      </Container>
   );
 }

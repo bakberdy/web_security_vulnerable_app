@@ -28,7 +28,7 @@ export function Sidebar({
   return (
     <aside
       className={clsx(
-        'flex flex-col bg-white border-r border-gray-200 transition-all duration-300',
+        'flex h-full flex-col overflow-hidden rounded-2xl bg-white/80 shadow-md ring-1 ring-gray-100 backdrop-blur transition-all duration-300',
         isCollapsed ? 'w-16' : 'w-64',
         className
       )}
@@ -38,7 +38,7 @@ export function Sidebar({
         <div className="flex justify-end p-4 border-b border-gray-200">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-md hover:bg-gray-100 text-gray-500 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <svg
@@ -71,10 +71,10 @@ export function Sidebar({
               key={item.href}
               to={item.href}
               className={clsx(
-                'flex items-center rounded-lg transition-colors',
-                isCollapsed ? 'justify-center p-3' : 'px-3 py-2 space-x-3',
+                'flex items-center rounded-xl text-sm font-semibold transition-all',
+                isCollapsed ? 'justify-center p-3' : 'px-3 py-2 gap-3',
                 isActive
-                  ? 'bg-primary-50 text-primary-600'
+                  ? 'bg-primary-100 text-primary-700 shadow-sm ring-1 ring-primary-200'
                   : 'text-gray-700 hover:bg-gray-100'
               )}
               title={isCollapsed ? item.label : undefined}

@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGigDetails } from '@/features/gigs/model/useGigDetails';
-import { Loading, Alert, Button, Card } from '@/shared/ui';
+import { Loading, Alert, Button, Card, Container } from '@/shared/ui';
 
 export function GigDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -10,20 +10,25 @@ export function GigDetailPage() {
   const { gig, isLoading, error } = useGigDetails(gigId);
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <Container className="py-8">
+        <Loading />
+      </Container>
+    );
   }
 
   if (error || !gig) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Alert variant="error">{error || 'Gig not found'}</Alert>
-      </div>
+      <Container className="py-8">
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Alert variant="error">{error || 'Gig not found'}</Alert>
+        </div>
+      </Container>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
         <Button
           variant="secondary"
           onClick={() => navigate('/gigs')}
@@ -80,7 +85,6 @@ export function GigDetailPage() {
             </Button>
           </div>
         </Card>
-      </div>
-    </div>
+      </Container>
   );
 }

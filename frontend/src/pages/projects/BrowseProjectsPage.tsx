@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ProjectFilters } from '@/entities/project';
 import { ProjectCard, useSearchProjects } from '@/features/projects';
-import { Loading, Alert, Input, Button } from '@/shared/ui';
+import { Loading, Alert, Input, Button, Container } from '@/shared/ui';
 
 export function BrowseProjectsPage() {
   const [query, setQuery] = useState('');
@@ -14,8 +14,7 @@ export function BrowseProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Browse Projects
@@ -59,7 +58,6 @@ export function BrowseProjectsPage() {
             )}
           </div>
         )}
-      </div>
-    </div>
+      </Container>
   );
 }
