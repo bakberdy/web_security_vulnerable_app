@@ -1,12 +1,12 @@
 import { apiClient } from '@/shared/api/client';
-import { User } from '@/entities/user';
+import type { User } from '@/entities/user';
 
-export interface RegisterData {
+export type RegisterData = {
   email: string;
   password: string;
 }
 
-export interface LoginData {
+export type LoginData = {
   email: string;
   password: string;
 }

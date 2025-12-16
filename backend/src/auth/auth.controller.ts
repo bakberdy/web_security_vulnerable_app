@@ -1,9 +1,9 @@
-import { Controller, Post, Body, Session, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Session, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './models/register.dto';
 import { LoginDto } from './models/login.dto';
 import { UserEntity } from './models/user.entity';
-import { Session as ExpressSession } from 'express-session';
+import type { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,21 +18,25 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: LoginDto,
-    @Session() session: ExpressSession,
+    @Req() request: Request,
   ): Promise<UserEntity> {
     const user = await this.authService.login(loginDto);
     
-    session.userId = user.id;
-    session.userEmail = user.email;
-    session.userRole = user.role;
+    if (request.session) {
+      request.session.userId = user.id;
+      request.session.userEmail = user.email;
+      request.session.userRole = user.role;
+    }
 
     return user;
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Session() session: ExpressSession): { message: string } {
-    session.destroy(() => {});
+  logout(@Req() request: Request): { message: string } {
+    if (request.session) {
+      request.session.destroy(() => {});
+    }
     return { message: 'Logged out successfully' };
   }
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { login as apiLogin, LoginData } from '../api/authApi';
-import { User } from '@/entities/user';
+import { login as apiLogin } from '../api/authApi';
+import type { LoginData } from '../api/authApi';
+import type { User } from '@/entities/user';
 
 export function useLogin() {
   const [isLoading, setIsLoading] = useState(false);

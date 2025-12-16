@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@/entities/user';
+import type { User } from '@/entities/user';
 import { getCurrentUser, logout as apiLogout } from '@/features/auth';
 
 interface AuthContextValue {

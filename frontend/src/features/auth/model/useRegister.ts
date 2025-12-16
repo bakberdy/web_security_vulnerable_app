@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { register as apiRegister, RegisterData } from '../api/authApi';
-import { User } from '@/entities/user';
+import { register as apiRegister } from '../api/authApi';
+import type { RegisterData } from '../api/authApi';
+import type { User } from '@/entities/user';
 
 export function useRegister() {
   const [isLoading, setIsLoading] = useState(false);
