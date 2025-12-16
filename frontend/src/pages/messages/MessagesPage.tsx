@@ -4,12 +4,21 @@ import { apiClient } from '@/shared/api/client';
 import { useAuth } from '@/app/providers/AuthProvider';
 import type { Message } from '@/entities/message';
 
+interface Conversation {
+  userId: number;
+  userName?: string;
+  lastMessage: string;
+  lastMessageDate: string;
+  unread: boolean;
+}
+
 export function MessagesPage() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const selectedUserId = searchParams.get('user');
   
-  const [conversations, setConversations] = useState<any[]>([]);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [subject, setSubject] = useState('');
@@ -21,46 +30,35 @@ export function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedUserId) {
-      loadMessages(Number(selectedUserId));
+    setConversations(buildConversationsFromMessages(allMessages));
+  }, [allMessages, user?.id]);
+
+  useEffect(() => {
+    if (!selectedUserId) {
+      setMessages([]);
+      return;
     }
-  }, [selectedUserId]);
+
+    const userIdNumber = Number(selectedUserId);
+    const thread = getThreadForUser(userIdNumber);
+    setMessages(thread);
+    void markThreadAsRead(thread);
+  }, [selectedUserId, allMessages]);
 
   async function loadConversations() {
     try {
-      const response = await apiClient.get('/messages');
-      const msgs = response.data as Message[];
-      
-      const convMap = new Map();
-      msgs.forEach((msg: Message) => {
-        const otherUserId = msg.sender_id === user?.id ? msg.receiver_id : msg.sender_id;
-        const otherUserName = msg.sender_id === user?.id ? msg.receiver_name : msg.sender_name;
-        
-        if (!convMap.has(otherUserId)) {
-          convMap.set(otherUserId, {
-            userId: otherUserId,
-            userName: otherUserName,
-            lastMessage: msg.body,
-            lastMessageDate: msg.created_at,
-            unread: !msg.read && msg.receiver_id === user?.id,
-          });
-        }
-      });
-      
-      setConversations(Array.from(convMap.values()));
+      const [inboxRes, sentRes] = await Promise.all([
+        apiClient.get<Message[]>('/messages/inbox'),
+        apiClient.get<Message[]>('/messages/sent'),
+      ]);
+
+      const merged = [...inboxRes.data, ...sentRes.data];
+      setAllMessages(merged);
+      setConversations(buildConversationsFromMessages(merged));
     } catch (error) {
       console.error('Failed to load conversations:', error);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function loadMessages(userId: number) {
-    try {
-      const response = await apiClient.get(`/messages/thread/${userId}`);
-      setMessages(response.data);
-    } catch (error) {
-      console.error('Failed to load messages:', error);
     }
   }
 
@@ -69,21 +67,76 @@ export function MessagesPage() {
 
     setSending(true);
     try {
-      await apiClient.post('/messages', {
-        receiver_id: Number(selectedUserId),
+      const receiverId = Number(selectedUserId);
+      await apiClient.post<Message>('/messages', {
+        receiver_id: receiverId,
         subject: subject || 'Re: Conversation',
         body: newMessage,
       });
       
       setNewMessage('');
       setSubject('');
-      loadMessages(Number(selectedUserId));
-      loadConversations();
+      await loadConversations();
     } catch (error) {
       console.error('Failed to send message:', error);
       alert('Failed to send message');
     } finally {
       setSending(false);
+    }
+  }
+
+  function buildConversationsFromMessages(messagesList: Message[]): Conversation[] {
+    const convMap = new Map<number, Conversation>();
+
+    messagesList.forEach((msg) => {
+      const otherUserId = msg.sender_id === user?.id ? msg.receiver_id : msg.sender_id;
+      const otherUserName = msg.sender_id === user?.id ? msg.receiver_name : msg.sender_name;
+
+      const existing = convMap.get(otherUserId);
+      const isUnread = !msg.read && msg.receiver_id === user?.id;
+      if (!existing || new Date(msg.created_at) > new Date(existing.lastMessageDate)) {
+        convMap.set(otherUserId, {
+          userId: otherUserId,
+          userName: otherUserName,
+          lastMessage: msg.body,
+          lastMessageDate: msg.created_at,
+          unread: isUnread,
+        });
+      } else if (isUnread) {
+        convMap.set(otherUserId, { ...existing, unread: true });
+      }
+    });
+
+    return Array.from(convMap.values()).sort((a, b) => (
+      new Date(b.lastMessageDate).getTime() - new Date(a.lastMessageDate).getTime()
+    ));
+  }
+
+  function getThreadForUser(userId: number): Message[] {
+    return allMessages
+      .filter((msg) =>
+        (msg.sender_id === user?.id && msg.receiver_id === userId) ||
+        (msg.receiver_id === user?.id && msg.sender_id === userId)
+      )
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  }
+
+  async function markThreadAsRead(thread: Message[]) {
+    const unreadIds = thread
+      .filter((msg) => !msg.read && msg.receiver_id === user?.id)
+      .map((msg) => msg.id);
+
+    if (unreadIds.length === 0) return;
+
+    try {
+      await Promise.all(unreadIds.map((id) => apiClient.patch(`/messages/${id}/read`)));
+      const updatedMessages = allMessages.map((msg) => (
+        unreadIds.includes(msg.id) ? { ...msg, read: true } : msg
+      ));
+      setAllMessages(updatedMessages);
+      setConversations(buildConversationsFromMessages(updatedMessages));
+    } catch (error) {
+      console.error('Failed to mark messages as read:', error);
     }
   }
 

@@ -1,6 +1,11 @@
 import { apiClient } from '@/shared/api/client';
 import type { Project, ProjectFilters, CreateProjectDto, UpdateProjectDto } from '@/entities/project';
 
+export async function getMyProjects(): Promise<Project[]> {
+  const { data } = await apiClient.get('/projects/my-projects');
+  return data;
+}
+
 export async function searchProjects(filters: ProjectFilters): Promise<Project[]> {
   const { data } = await apiClient.get('/projects/search', { params: filters });
   return data;

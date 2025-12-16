@@ -5,16 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import type { RegisterRole } from '@/shared/types'
 import { useAuth } from '@/app/providers/AuthProvider'
 
-type Step = 1 | 2
-
 interface RegisterFormProps {
   onSuccess?: () => void
 }
-
-const steps = [
-  { id: 1, title: 'Account', description: 'Access and security' },
-  { id: 2, title: 'Profile', description: 'Role and details' },
-] satisfies Array<{ id: Step; title: string; description: string }>
 
 const roleOptions: Array<{ value: RegisterRole; title: string; description: string }> = [
   { value: 'client', title: 'Client', description: 'Post work, manage orders, and pay securely.' },
@@ -22,7 +15,6 @@ const roleOptions: Array<{ value: RegisterRole; title: string; description: stri
 ]
 
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
-  const [step, setStep] = useState<Step>(1)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -91,7 +83,6 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       return
     }
     setValidationError('')
-    setStep(2)
   }
 
   async function completeRegistration() {
@@ -123,11 +114,6 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
-    if (step === 1) {
-      handleNext()
-      return
-    }
-
     if (!isTabActive) {
       setValidationError('Switch to the active tab to finish signing up')
       return
@@ -136,7 +122,6 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     const message = validateAccount()
     if (message) {
       setValidationError(message)
-      setStep(1)
       return
     }
 
@@ -146,42 +131,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Flex gap={3} className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-        {steps.map((item) => {
-          const isActive = step === item.id
-          return (
-            <div
-              key={item.id}
-              className={
-                `flex-1 rounded-lg border p-3 transition-all ` +
-                `${isActive ? 'border-primary-300 bg-white shadow-sm' : 'border-gray-200 bg-gray-50'}`
-              }
-            >
-              <Flex align="center" gap={2}>
-                <span
-                  className={
-                    `h-8 w-8 rounded-full flex items-center justify-center font-semibold ` +
-                    `${isActive ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'}`
-                  }
-                >
-                  {item.id}
-                </span>
-                <Stack spacing={1}>
-                  <Text weight="semibold">{item.title}</Text>
-                  <Text size="sm" color="muted">{item.description}</Text>
-                </Stack>
-              </Flex>
-            </div>
-          )
-        })}
-      </Flex>
-
       {(error || validationError) && (
         <Alert variant="error">{error || validationError}</Alert>
       )}
-
-      {step === 1 && (
+      <Stack spacing={5}>
         <Stack spacing={4}>
+          <Text weight="semibold">Account</Text>
           <Grid cols={2} gap={4}>
             <Input
               label="Full name"
@@ -221,10 +176,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             Use throwaway credentials while testing this lab environment.
           </Text>
         </Stack>
-      )}
 
-      {step === 2 && (
         <Stack spacing={4}>
+          <Text weight="semibold">Profile</Text>
           <Stack spacing={2}>
             <Text weight="semibold">Choose your role</Text>
             <Flex gap={3} wrap>
@@ -296,26 +250,18 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             />
           )}
         </Stack>
-      )}
+      </Stack>
 
-      <Flex align="center" gap={3} className="pt-2">
-        {step === 2 && (
-          <Button type="button" variant="ghost" onClick={() => setStep(1)}>
-            Back
-          </Button>
-        )}
-
-        <Button
-          type={step === 1 ? 'button' : 'submit'}
-          onClick={step === 1 ? handleNext : undefined}
-          fullWidth
-          className="flex-1"
-          disabled={step === 2 ? isLoading : false}
-          loading={step === 2 ? isLoading : false}
-        >
-          {step === 1 ? 'Continue to profile' : isLoading ? 'Creating account...' : 'Create account'}
-        </Button>
-      </Flex>
+      <Button
+        type="submit"
+        fullWidth
+        className="flex-1"
+        disabled={isLoading}
+        loading={isLoading}
+        onClick={handleNext}
+      >
+        {isLoading ? 'Creating account...' : 'Create account'}
+      </Button>
     </form>
   )
 }

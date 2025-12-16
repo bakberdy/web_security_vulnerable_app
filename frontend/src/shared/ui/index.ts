@@ -7,6 +7,7 @@ export { Modal as Dialog } from './modal/Modal'
 export { Alert } from './Alert'
 export { Loading } from './Loading'
 export { EmptyState } from './EmptyState'
+export { FileUpload } from './FileUpload'
 
 // Layout
 export { Container, Flex, Grid, Stack } from './layout'

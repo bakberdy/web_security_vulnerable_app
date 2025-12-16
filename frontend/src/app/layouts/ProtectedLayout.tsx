@@ -10,23 +10,49 @@ export function ProtectedLayout() {
   const dashboardPath = user?.role === 'freelancer' ? '/dashboard/freelancer' : '/dashboard/client'
 
   const navLinks = useMemo(
-    () => [
-      { label: 'Home', href: '/' },
-      { label: 'Gigs', href: '/gigs' },
-      { label: 'Projects', href: '/projects' },
-      { label: 'Messages', href: '/messages' },
-    ],
-    []
+    () => {
+      if (user?.role === 'freelancer') {
+        return [
+          { label: 'Home', href: '/' },
+          { label: 'Projects', href: '/projects' },
+          { label: 'Gigs', href: '/gigs/my-gigs' },
+          { label: 'Orders', href: '/orders/my-orders' },
+          { label: 'Messages', href: '/messages' },
+        ]
+      }
+
+      return [
+        { label: 'Home', href: '/' },
+        { label: 'Gigs', href: '/gigs' },
+        { label: 'Projects', href: '/projects/my-projects' },
+        { label: 'Orders', href: '/orders/my-orders' },
+        { label: 'Messages', href: '/messages' },
+      ]
+    },
+    [user?.role]
   )
 
   const sidebarItems = useMemo(
-    () => [
-      { label: 'Dashboard', href: dashboardPath },
-      { label: 'Gigs', href: '/gigs' },
-      { label: 'Projects', href: '/projects' },
-      { label: 'Messages', href: '/messages' },
-    ],
-    [dashboardPath]
+    () => {
+      if (user?.role === 'freelancer') {
+        return [
+          { label: 'Dashboard', href: dashboardPath },
+          { label: 'My Gigs', href: '/gigs/my-gigs' },
+          { label: 'Browse Projects', href: '/projects' },
+          { label: 'Orders', href: '/orders/my-orders' },
+          { label: 'Messages', href: '/messages' },
+        ]
+      }
+
+      return [
+        { label: 'Dashboard', href: dashboardPath },
+        { label: 'Browse Gigs', href: '/gigs' },
+        { label: 'My Projects', href: '/projects/my-projects' },
+        { label: 'Orders', href: '/orders/my-orders' },
+        { label: 'Messages', href: '/messages' },
+      ]
+    },
+    [dashboardPath, user?.role]
   )
 
   const userMenu = useMemo(

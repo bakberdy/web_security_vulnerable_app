@@ -1,6 +1,11 @@
 import { apiClient } from '@/shared/api/client';
 import type { Gig, GigFilters, CreateGigDto, UpdateGigDto } from '@/entities/gig';
 
+export async function getMyGigs(): Promise<Gig[]> {
+  const { data } = await apiClient.get('/gigs/my-gigs');
+  return data;
+}
+
 export async function searchGigs(filters: GigFilters): Promise<Gig[]> {
   const { data } = await apiClient.get('/gigs/search', { params: filters });
   return data;

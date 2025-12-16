@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGigDetails } from '@/features/gigs/model/useGigDetails';
-import { Loading, Alert, Button, Card, Container } from '@/shared/ui';
+import { Loading, Alert, Button, Card, Container, Text } from '@/shared/ui';
+import { useAuth } from '@/app/providers/AuthProvider';
 
 export function GigDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const gigId = Number(id);
+  const { user } = useAuth();
   
   const { gig, isLoading, error } = useGigDetails(gigId);
 
@@ -80,9 +82,16 @@ export function GigDetailPage() {
               Delivery: {gig.delivery_days} {gig.delivery_days === 1 ? 'day' : 'days'}
             </div>
             
-            <Button size="lg">
-              Order Now - ${gig.price}
-            </Button>
+            {user?.role === 'client' ? (
+              <Button
+                size="lg"
+                onClick={() => navigate(`/orders/create?gig=${gig.id}&seller=${gig.freelancer_id}&amount=${gig.price}`)}
+              >
+                Order Now - ${gig.price}
+              </Button>
+            ) : (
+              <Text color="muted" className="text-sm">Orders are available to clients.</Text>
+            )}
           </div>
         </Card>
       </Container>

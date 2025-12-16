@@ -51,20 +51,7 @@ export function LoginPage() {
 
               <Flex align="center" justify="between">
                 <Checkbox label="Remember me" />
-                <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                  Forgot password?
-                </Link>
               </Flex>
-
-              <Flex align="center" gap={2} className="text-sm text-gray-500">
-                <span className="flex-1 h-px bg-gray-200" aria-hidden="true" />
-                <span>OR</span>
-                <span className="flex-1 h-px bg-gray-200" aria-hidden="true" />
-              </Flex>
-
-              <Button variant="outline" fullWidth leftIcon={<span>★</span>}>
-                Continue with Google
-              </Button>
 
               <Text color="muted" className="text-center text-sm">
                 Don't have an account?{' '}

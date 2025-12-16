@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '@/shared/api/client';
 import { useAuth } from '@/app/providers/AuthProvider';
+import { FileUpload } from '@/shared/ui';
 import type { Order } from '@/entities/order';
 
 export function OrderDetailPage() {
@@ -139,6 +140,11 @@ export function OrderDetailPage() {
               <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{order.requirements}</p>
             </div>
           )}
+
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Attachments</h3>
+            <FileUpload entityType="order" entityId={order.id} label="Upload order files" />
+          </div>
 
           {order.gig_id && (
             <div className="mb-6">

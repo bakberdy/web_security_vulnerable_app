@@ -84,7 +84,11 @@ export function ProjectDetailPage() {
 
           {project.status === 'open' && (
             <div className="pt-6 border-t border-gray-200">
-              <Button size="lg" className="w-full">
+              <Button
+                size="lg"
+                className="w-full"
+                onClick={() => navigate(`/proposals/submit?project=${project.id}`)}
+              >
                 Submit Proposal
               </Button>
             </div>
