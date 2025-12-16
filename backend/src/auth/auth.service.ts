@@ -47,27 +47,25 @@ export class AuthService {
   /**
    * TODO: VULNERABILITY SQL Injection in login endpoint
    * 
-   * This method uses unsafe string interpolation instead of parameterized queries.
-   * This allows attackers to bypass authentication using SQL injection.
+   * This method uses unsafe string interpolation in the email field.
+   * While password verification uses bcrypt, the email field is vulnerable to SQL injection.
    * 
    * Exploit examples:
-   * - email: "admin'--" (comment out password check)
-   * - email: "' OR '1'='1'--" (always true condition)
+   * - email: "admin@example.com'--" (comment out password check)
+   * - email: "' OR '1'='1'--" (bypass login for first user)
+   * - email: "' UNION SELECT id, email, password, role, created_at FROM users WHERE email='admin@example.com'--"
    * 
    * Safe version would use:
    * const user = this.db.queryOne<User>(
    *   'SELECT * FROM users WHERE email = ?',
    *   [email]
    * );
-   * if (!user || !await bcrypt.compare(password, user.password)) {
-   *   throw new UnauthorizedException('Invalid credentials');
-   * }
    */
   async login({ email, password }: LoginDto): Promise<UserEntity> {
-    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+    const query = `SELECT * FROM users WHERE email = '${email}'`;
     const user = this.db.queryOne<User>(query);
 
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
