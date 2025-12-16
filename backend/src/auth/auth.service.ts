@@ -4,30 +4,53 @@ import { RegisterDto } from './models/register.dto';
 import { LoginDto } from './models/login.dto';
 import { UserEntity } from './models/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../shared/types/common.types';
+
+interface UserRow {
+  id: number;
+  email: string;
+  password: string;
+  full_name: string;
+  role: 'client' | 'freelancer' | 'admin';
+  bio?: string;
+  avatar_url?: string;
+  hourly_rate?: number;
+  location?: string;
+  joined_date: string;
+  balance: number;
+  total_earned: number;
+  rating: number;
+  completed_jobs: number;
+}
 
 @Injectable()
 export class AuthService {
   constructor(private readonly db: DatabaseService) {}
 
-  async register({ email, password }: RegisterDto): Promise<UserEntity> {
-    const existingUser = this.db.queryOne<User>(
+  async register(data: RegisterDto): Promise<UserEntity> {
+    const existingUser = this.db.queryOne<UserRow>(
       'SELECT * FROM users WHERE email = ?',
-      [email],
+      [data.email],
     );
 
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const result = this.db.execute(
-      'INSERT INTO users (email, password, role) VALUES (?, ?, ?)',
-      [email, hashedPassword, 'user'],
+      `INSERT INTO users (email, password, full_name, role, bio, hourly_rate, location) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        data.email,
+        data.password,
+        data.full_name,
+        data.role,
+        data.bio || null,
+        data.hourly_rate || null,
+        data.location || null,
+      ],
     );
 
-    const user = this.db.queryOne<User>(
+    const user = this.db.queryOne<UserRow>(
       'SELECT * FROM users WHERE id = ?',
       [result.lastInsertRowid],
     );
@@ -39,41 +62,46 @@ export class AuthService {
     return {
       id: user.id,
       email: user.email,
+      full_name: user.full_name,
       role: user.role,
-      created_at: user.created_at,
+      bio: user.bio,
+      avatar_url: user.avatar_url,
+      hourly_rate: user.hourly_rate,
+      location: user.location,
+      joined_date: user.joined_date,
+      balance: user.balance,
+      total_earned: user.total_earned,
+      rating: user.rating,
+      completed_jobs: user.completed_jobs,
     };
   }
 
-  /**
-   * TODO: VULNERABILITY SQL Injection in login endpoint - Complete Authentication Bypass
-   * 
-   * This method uses unsafe string interpolation for BOTH email and password,
-   * allowing complete authentication bypass without knowing any credentials.
-   * 
-   * Exploit examples:
-   * - email: "admin@example.com'--" password: "anything" (comment out password check)
-   * - email: "' OR '1'='1'--" password: "anything" (login as first user)
-   * - email: "' OR email='admin@example.com'--" password: "anything" (login as admin)
-   * 
-   * Safe version would use:
-   * const user = this.db.queryOne<User>(
-   *   'SELECT * FROM users WHERE email = ? AND password = ?',
-   *   [email, hashedPassword]
-   * );
-   */
   async login({ email, password }: LoginDto): Promise<UserEntity> {
-    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
-    const user = this.db.queryOne<User>(query);
+    const query = `SELECT * FROM users WHERE email = '${email}'`;
+    const user = this.db.queryOne<UserRow>(query);
 
     if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.password !== password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     return {
       id: user.id,
       email: user.email,
+      full_name: user.full_name,
       role: user.role,
-      created_at: user.created_at,
+      bio: user.bio,
+      avatar_url: user.avatar_url,
+      hourly_rate: user.hourly_rate,
+      location: user.location,
+      joined_date: user.joined_date,
+      balance: user.balance,
+      total_earned: user.total_earned,
+      rating: user.rating,
+      completed_jobs: user.completed_jobs,
     };
   }
 }

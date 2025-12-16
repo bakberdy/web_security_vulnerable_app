@@ -1,9 +1,14 @@
 import { apiClient } from '@/shared/api/client';
-import type { User } from '@/entities/user';
+import type { User, UserRole } from '@/entities/user';
 
 export type RegisterData = {
   email: string;
   password: string;
+  full_name: string;
+  role: UserRole;
+  bio?: string;
+  hourly_rate?: number;
+  location?: string;
 }
 
 export type LoginData = {

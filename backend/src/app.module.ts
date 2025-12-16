@@ -5,9 +5,30 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { FilesModule } from './files/files.module';
+import { GigsModule } from './gigs/gigs.module';
+import { ProjectsModule } from './projects/projects.module';
+import { ProposalsModule } from './proposals/proposals.module';
+import { OrdersModule } from './orders/orders.module';
+import { MessagesModule } from './messages/messages.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
-  imports: [CoreModule, SharedModule, AuthModule, UsersModule],
+  imports: [
+    CoreModule,
+    SharedModule,
+    AuthModule,
+    UsersModule,
+    FilesModule,
+    GigsModule,
+    ProjectsModule,
+    ProposalsModule,
+    OrdersModule,
+    MessagesModule,
+    ReviewsModule,
+    TransactionsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

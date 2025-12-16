@@ -1,0 +1,91 @@
+import { useParams, useNavigate } from 'react-router-dom';
+import { useProjectDetails } from '@/features/projects';
+import { Loading, Alert, Button, Card } from '@/shared/ui';
+
+export function ProjectDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const projectId = Number(id);
+  
+  const { project, isLoading, error } = useProjectDetails(projectId);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error || !project) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Alert type="error" message={error || 'Project not found'} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Button
+          variant="secondary"
+          onClick={() => navigate('/projects')}
+          className="mb-6"
+        >
+          ← Back to Projects
+        </Button>
+
+        <Card className="mb-6">
+          <div className="flex items-start justify-between mb-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {project.title}
+            </h1>
+            <span className={`px-3 py-1 text-sm rounded ${
+              project.status === 'open' ? 'bg-green-100 text-green-800' :
+              project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              {project.status}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200">
+            <div>
+              <p className="text-sm text-gray-600">Client</p>
+              <p className="font-semibold text-gray-900">{project.client_name}</p>
+            </div>
+            
+            <div>
+              <p className="text-sm text-gray-600">Budget</p>
+              <p className="text-2xl font-bold text-blue-600">
+                ${project.budget_min} - ${project.budget_max}
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-sm text-gray-600">Posted</p>
+              <p className="font-semibold text-gray-900">
+                {new Date(project.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+              Project Description
+            </h2>
+            <div
+              className="prose prose-sm max-w-none text-gray-700"
+              dangerouslySetInnerHTML={{ __html: project.description }}
+            />
+          </div>
+
+          {project.status === 'open' && (
+            <div className="pt-6 border-t border-gray-200">
+              <Button size="lg" className="w-full">
+                Submit Proposal
+              </Button>
+            </div>
+          )}
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -2,7 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './app/providers/AuthProvider';
 import { LoginPage } from './pages/login';
 import { RegisterPage } from './pages/register';
-import { TasksPage } from './pages/tasks';
+import { HomePage } from './pages/home';
+import { BrowseGigsPage, GigDetailPage } from './pages/gigs';
+import { BrowseProjectsPage, ProjectDetailPage } from './pages/projects';
+import { FreelancerDashboard, ClientDashboard } from './pages/dashboard';
+import { OrderDetailPage } from './pages/orders';
+import { SubmitProposalPage, ProposalListPage } from './pages/proposals';
+import { MessagesPage } from './pages/messages';
 import { Loading } from './shared/ui';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -22,7 +28,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     return <Loading />;
   }
 
-  return isAuthenticated ? <Navigate to="/tasks" /> : <>{children}</>;
+  return isAuthenticated ? <Navigate to="/login" /> : <>{children}</>;
 }
 
 function App() {
@@ -32,7 +38,11 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Navigate to="/tasks" replace />}
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/login"
@@ -51,10 +61,82 @@ function App() {
             }
           />
           <Route
-            path="/tasks"
+            path="/gigs"
             element={
               <ProtectedRoute>
-                <TasksPage />
+                <BrowseGigsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gigs/:id"
+            element={
+              <ProtectedRoute>
+                <GigDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <BrowseProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/freelancer"
+            element={
+              <ProtectedRoute>
+                <FreelancerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/client"
+            element={
+              <ProtectedRoute>
+                <ClientDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proposals/submit"
+            element={
+              <ProtectedRoute>
+                <SubmitProposalPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proposals/project/:projectId"
+            element={
+              <ProtectedRoute>
+                <ProposalListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <MessagesPage />
               </ProtectedRoute>
             }
           />

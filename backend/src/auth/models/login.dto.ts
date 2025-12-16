@@ -1,4 +1,5 @@
 import { IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * TODO: VULNERABILITY Email validation removed to allow SQL injection
@@ -9,9 +10,11 @@ import { IsString } from 'class-validator';
  * A secure implementation would use @IsEmail() decorator.
  */
 export class LoginDto {
+  @ApiProperty({ example: 'admin@example.com', description: 'User email address' })
   @IsString()
   email: string;
 
+  @ApiProperty({ example: 'admin123', description: 'User password' })
   @IsString()
   password: string;
 }

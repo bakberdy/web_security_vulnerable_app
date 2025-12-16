@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useLogin } from '../model/useLogin';
 import { Input, Button, Alert } from '@/shared/ui';
 import { useNavigate } from 'react-router-dom';
