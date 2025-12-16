@@ -1,27 +1,16 @@
 import { apiClient } from '@/shared/api/client';
-import type { User, UserRole } from '@/entities/user';
+import type { User } from '@/entities/user';
+import type { LoginDto, RegisterDto } from '@/shared/types';
 
-export type RegisterData = {
-  email: string;
-  password: string;
-  full_name: string;
-  role: UserRole;
-  bio?: string;
-  hourly_rate?: number;
-  location?: string;
-}
+export type RegisterData = RegisterDto;
+export type LoginData = LoginDto;
 
-export type LoginData = {
-  email: string;
-  password: string;
-}
-
-export async function register(data: RegisterData): Promise<User> {
+export async function register(data: RegisterDto): Promise<User> {
   const response = await apiClient.post('/auth/register', data);
   return response.data;
 }
 
-export async function login(data: LoginData): Promise<User> {
+export async function login(data: LoginDto): Promise<User> {
   const response = await apiClient.post('/auth/login', data);
   return response.data;
 }

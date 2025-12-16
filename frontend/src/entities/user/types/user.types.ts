@@ -1,6 +1,3 @@
-export type User = {
-  id: number;
-  email: string;
-  role: 'user' | 'admin';
-  created_at: string;
-}
+import type { User as SharedUser } from '@/shared/types'
+
+export type User = SharedUser

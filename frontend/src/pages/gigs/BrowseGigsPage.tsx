@@ -30,7 +30,7 @@ export function BrowseGigsPage() {
         {isLoading && <Loading />}
         
         {error && (
-          <Alert type="error" message={error} />
+          <Alert variant="error">{error}</Alert>
         )}
 
         {!isLoading && !error && (

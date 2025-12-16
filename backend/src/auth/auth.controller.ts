@@ -15,8 +15,16 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user', description: 'Create a new user account with role (client or freelancer)' })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad request - validation failed or user already exists' })
-  async register(@Body() registerDto: RegisterDto): Promise<UserEntity> {
-    return this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto, @Req() request: Request): Promise<UserEntity> {
+    const user = await this.authService.register(registerDto);
+
+    if (request.session) {
+      request.session.userId = user.id;
+      request.session.userEmail = user.email;
+      request.session.userRole = user.role;
+    }
+
+    return user;
   }
 
   @Post('login')

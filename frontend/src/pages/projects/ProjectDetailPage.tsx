@@ -16,7 +16,7 @@ export function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Alert type="error" message={error || 'Project not found'} />
+        <Alert variant="error">{error || 'Project not found'}</Alert>
       </div>
     );
   }

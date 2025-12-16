@@ -16,7 +16,7 @@ export function GigDetailPage() {
   if (error || !gig) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Alert type="error" message={error || 'Gig not found'} />
+        <Alert variant="error">{error || 'Gig not found'}</Alert>
       </div>
     );
   }

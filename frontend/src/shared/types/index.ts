@@ -37,3 +37,5 @@ export interface ApiError {
   message: string;
   timestamp: string;
 }
+
+export type { LoginDto, RegisterDto, RegisterRole } from './auth'

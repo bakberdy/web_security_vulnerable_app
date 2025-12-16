@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { register as apiRegister } from '../api/authApi';
 import type { RegisterData } from '../api/authApi';
 import type { User } from '@/entities/user';
+import { setAuthUser } from '@/shared/model/auth-store';
+import { extractApiErrorMessage } from '@/shared/api/error';
 
 export function useRegister() {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,9 +15,10 @@ export function useRegister() {
 
     try {
       const user = await apiRegister(data);
+      setAuthUser(user);
       return user;
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to register';
+      const message = extractApiErrorMessage(err);
       setError(message);
       return null;
     } finally {

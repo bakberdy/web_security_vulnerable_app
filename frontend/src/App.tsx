@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './app/providers/AuthProvider';
+import { ToastProvider } from './shared/ui/notification';
 import { LoginPage } from './pages/login';
 import { RegisterPage } from './pages/register';
 import { HomePage } from './pages/home';
@@ -22,20 +23,28 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return <Loading />;
   }
 
-  return isAuthenticated ? <Navigate to="/login" /> : <>{children}</>;
+  if (isAuthenticated) {
+    const redirectPath = user?.role === 'freelancer'
+      ? '/dashboard/freelancer'
+      : '/dashboard/client';
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return <>{children}</>;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <ToastProvider position="top-right">
+          <Routes>
           <Route
             path="/"
             element={
@@ -141,6 +150,7 @@ function App() {
             }
           />
         </Routes>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );

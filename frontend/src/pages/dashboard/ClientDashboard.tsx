@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { StatsCard, ActiveOrdersList } from '@/widgets/dashboard';
 import { apiClient } from '@/shared/api/client';
 import type { Order } from '@/entities/order';
 import type { Project } from '@/entities/project';
+import { Button } from '@/shared/ui';
+import { useAuth } from '@/app/providers/AuthProvider';
 
 interface ClientStats {
   total_spent: number;
@@ -22,6 +24,8 @@ export function ClientDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadDashboardData();
@@ -53,6 +57,11 @@ export function ClientDashboard() {
     }
   }
 
+  async function handleLogout() {
+    await logout();
+    navigate('/login', { replace: true });
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -64,9 +73,14 @@ export function ClientDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Client Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your projects and orders</p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Client Dashboard</h1>
+            <p className="text-gray-600 mt-2">Manage your projects and orders</p>
+          </div>
+          <Button variant="ghost" onClick={handleLogout}>
+            Logout
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
