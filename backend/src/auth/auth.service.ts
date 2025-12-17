@@ -77,14 +77,11 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginDto): Promise<UserEntity> {
-    const query = `SELECT * FROM users WHERE email = '${email}'`;
+    // TODO: VULNERABILITY SQL Injection in login - unsafe string interpolation enables authentication bypass
+    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
     const user = this.db.queryOne<UserRow>(query);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    if (user.password !== password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 

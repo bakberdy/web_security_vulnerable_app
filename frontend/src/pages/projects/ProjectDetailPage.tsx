@@ -78,6 +78,7 @@ export function ProjectDetailPage() {
             </h2>
             <div
               className="prose prose-sm max-w-none text-gray-700"
+              // TODO: VULNERABILITY Stored XSS - renders unsanitized project description
               dangerouslySetInnerHTML={{ __html: project.description }}
             />
           </div>

@@ -40,12 +40,6 @@ export function LoginPage() {
               <Text color="muted">Login to access your account</Text>
             </Stack>
 
-            <Alert variant="warning" className="mb-4">
-              <Text size="sm">
-                🔓 <strong>Security Demo:</strong> This login is intentionally vulnerable to SQL injection. Try: <span className="font-mono">admin@example.com'--</span>
-              </Text>
-            </Alert>
-
             <Stack spacing={4}>
               <LoginForm />
 

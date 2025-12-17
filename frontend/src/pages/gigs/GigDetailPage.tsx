@@ -73,6 +73,7 @@ export function GigDetailPage() {
             </h2>
             <div
               className="prose prose-sm max-w-none text-gray-700"
+              // TODO: VULNERABILITY Stored XSS - renders unsanitized gig description
               dangerouslySetInnerHTML={{ __html: gig.description }}
             />
           </div>
