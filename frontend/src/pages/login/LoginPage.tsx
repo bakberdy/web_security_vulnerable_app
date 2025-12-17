@@ -1,5 +1,5 @@
 import { LoginForm } from '@/features/auth'
-import { Card, Button, Alert, Container, Heading, Text, Checkbox, Flex, Stack } from '@/shared/ui'
+import { Card, Container, Heading, Text, Checkbox, Flex, Stack } from '@/shared/ui'
 import { Link } from 'react-router-dom'
 
 export function LoginPage() {

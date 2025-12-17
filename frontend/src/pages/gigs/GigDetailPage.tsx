@@ -95,6 +95,4 @@ export function GigDetailPage() {
             )}
           </div>
         </Card>
-      </Container>
-  );
-}
+    </Container>)};
