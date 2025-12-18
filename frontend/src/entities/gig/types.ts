@@ -9,6 +9,7 @@ export interface Gig {
   price: number;
   delivery_days: number;
   status: GigStatus;
+  is_active: number;
   views: number;
   orders: number;
   rating: number;

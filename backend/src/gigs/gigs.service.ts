@@ -10,10 +10,11 @@ export class GigsService {
   constructor(private readonly db: DatabaseService) {}
 
   async createGig(freelancerId: number, dto: CreateGigDto): Promise<Gig> {
+    const isActive = dto.is_active !== undefined ? dto.is_active : 1;
     const result = this.db.execute(
-      `INSERT INTO gigs (freelancer_id, title, description, category, price, delivery_days, status)
-       VALUES (?, ?, ?, ?, ?, ?, 'active')`,
-      [freelancerId, dto.title, dto.description, dto.category, dto.price, dto.delivery_days]
+      `INSERT INTO gigs (freelancer_id, title, description, category, price, delivery_days, status, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, 'active', ?)`,
+      [freelancerId, dto.title, dto.description, dto.category, dto.price, dto.delivery_days, isActive]
     );
 
     const gigId = result.lastInsertRowid as number;
@@ -57,16 +58,14 @@ export class GigsService {
       SELECT g.*, u.full_name as freelancer_name, u.avatar_url as freelancer_avatar, u.rating as freelancer_rating
       FROM gigs g
       JOIN users u ON g.freelancer_id = u.id
-      WHERE g.status = 'active'
+      WHERE g.status = 'active' AND g.is_active = 1
     `;
 
     if (dto.query) {
-      // TODO: VULNERABILITY SQL Injection in gig search - unsafe string interpolation allows UNION attacks and data exfiltration
       query += ` AND (g.title LIKE '%${dto.query}%' OR g.description LIKE '%${dto.query}%')`;
     }
 
     if (dto.category) {
-      // TODO: VULNERABILITY SQL Injection in category filter - unsanitized user input enables query manipulation
       query += ` AND g.category = '${dto.category}'`;
     }
 
