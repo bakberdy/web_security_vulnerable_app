@@ -40,4 +40,8 @@ export class UpdateGigDto {
   @IsArray()
   @IsString({ each: true })
   skills?: string[];
+
+  @ApiPropertyOptional({ example: 1, description: 'Whether gig is active (1) or inactive (0)' })
+  @IsOptional()
+  is_active?: number;
 }

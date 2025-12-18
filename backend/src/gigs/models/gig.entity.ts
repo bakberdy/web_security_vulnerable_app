@@ -7,6 +7,7 @@ export interface Gig {
   price: number;
   delivery_days: number;
   status: 'active' | 'paused' | 'deleted';
+  is_active: number;
   created_at: string;
   updated_at: string;
   freelancer_name?: string;

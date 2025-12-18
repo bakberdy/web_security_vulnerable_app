@@ -9,7 +9,6 @@ export class SearchGigDto {
 
   @ApiProperty({ example: 'Web Development', description: 'Filter by category', required: false })
   @IsOptional()
-  @IsString()
   category?: string;
 
   @ApiProperty({ example: 100, description: 'Minimum price filter', minimum: 0, required: false })

@@ -8,6 +8,7 @@ interface GigSearchBarProps {
 
 export function GigSearchBar({ onSearch }: GigSearchBarProps) {
   const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
@@ -16,6 +17,7 @@ export function GigSearchBar({ onSearch }: GigSearchBarProps) {
     
     const filters: GigFilters = {
       query: query || undefined,
+      category: category || undefined,
       min_price: minPrice ? Number(minPrice) : undefined,
       max_price: maxPrice ? Number(maxPrice) : undefined
     };
@@ -25,8 +27,8 @@ export function GigSearchBar({ onSearch }: GigSearchBarProps) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-2">
           <Input
             type="text"
             placeholder="Search gigs..."
@@ -34,6 +36,13 @@ export function GigSearchBar({ onSearch }: GigSearchBarProps) {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+        
+        <Input
+          type="text"
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
         
         <Input
           type="number"

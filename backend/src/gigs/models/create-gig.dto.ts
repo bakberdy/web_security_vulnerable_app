@@ -29,4 +29,8 @@ export class CreateGigDto {
   @ApiProperty({ example: ['React', 'Node.js', 'TypeScript'], description: 'Required skills', type: [String], required: false })
   @IsOptional()
   skills?: string[];
+
+  @ApiProperty({ example: 1, description: 'Whether gig is active (1) or inactive (0)', required: false })
+  @IsOptional()
+  is_active?: number;
 }

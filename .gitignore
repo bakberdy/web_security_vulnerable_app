@@ -31,10 +31,10 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Database files
-*.db
-*.sqlite
-*.sqlite3
-backend/data/*.db
+# *.db
+# *.sqlite
+# *.sqlite3
+# backend/data/*.db
 !backend/data/.gitkeep
 
 # Uploaded files
