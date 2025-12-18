@@ -11,9 +11,18 @@ export function GigCard({ gig }: GigCardProps) {
     <Link to={`/gigs/${gig.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer">
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {gig.title}
-          </h3>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-lg font-semibold text-gray-900 flex-1">
+              {gig.title}
+            </h3>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+              gig.is_active === 1 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {gig.is_active === 1 ? 'Active' : 'Inactive'}
+            </span>
+          </div>
           
           <p className="text-sm text-gray-600 line-clamp-2">
             {gig.description}
