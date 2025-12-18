@@ -24,6 +24,11 @@ export function BrowseGigsPage() {
 
         <div className="mb-8">
           <GigSearchBar onSearch={handleSearch} />
+          {filters.query && (
+            <div className="mt-4 text-sm text-gray-600">
+              Showing results for: <span dangerouslySetInnerHTML={{ __html: filters.query }} />
+            </div>
+          )}
         </div>
 
         {isLoading && <Loading />}

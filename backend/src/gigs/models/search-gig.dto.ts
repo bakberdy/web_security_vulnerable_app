@@ -5,7 +5,6 @@ import { ApiProperty } from '@nestjs/swagger';
 export class SearchGigDto {
   @ApiProperty({ example: 'website', description: 'Search query for gig title/description', required: false })
   @IsOptional()
-  @IsString()
   query?: string;
 
   @ApiProperty({ example: 'Web Development', description: 'Filter by category', required: false })
