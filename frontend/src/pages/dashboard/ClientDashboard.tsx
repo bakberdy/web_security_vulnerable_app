@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { StatsCard, ActiveOrdersList } from '@/widgets/dashboard'
+import { ProjectImagePreview } from '@/features/projects'
 import { apiClient } from '@/shared/api/client'
 import type { Order } from '@/entities/order'
 import type { Project } from '@/entities/project'
@@ -122,27 +123,33 @@ export function ClientDashboard() {
                   <Link
                     key={project.id}
                     to={`/projects/${project.id}`}
-                    className="block border border-gray-200 rounded-lg p-4 hover:border-blue-500 transition-colors"
+                    className="block border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors"
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-gray-900 flex-1">{project.title}</h4>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ml-4 ${
-                        project.status === 'open' ? 'bg-green-100 text-green-800' :
-                        project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                        project.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {project.status.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{project.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">
-                        Budget: ${project.budget_min} - ${project.budget_max}
-                      </span>
-                      <span className="text-gray-500">
-                        {project.proposals_count || 0} proposals
-                      </span>
+                    <ProjectImagePreview 
+                      projectId={project.id} 
+                      className="aspect-video w-full bg-gray-100 object-cover"
+                    />
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-gray-900 flex-1">{project.title}</h4>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ml-4 ${
+                          project.status === 'open' ? 'bg-green-100 text-green-800' :
+                          project.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          project.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {project.status.replace('_', ' ')}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{project.description}</p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">
+                          Budget: ${project.budget_min} - ${project.budget_max}
+                        </span>
+                        <span className="text-gray-500">
+                          {project.proposals_count || 0} proposals
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 ))}

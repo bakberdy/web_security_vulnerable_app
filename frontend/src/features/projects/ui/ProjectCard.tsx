@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { Project } from '@/entities/project';
 import { Card } from '@/shared/ui';
+import { ProjectImagePreview } from './ProjectImagePreview';
 
 interface ProjectCardProps {
   project: Project;
@@ -9,8 +10,12 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link to={`/projects/${project.id}`}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-        <div className="space-y-3">
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <ProjectImagePreview 
+          projectId={project.id} 
+          className="aspect-video w-full bg-gray-100 object-cover"
+        />
+        <div className="space-y-3 p-4">
           <div className="flex items-start justify-between">
             <h3 className="text-lg font-semibold text-gray-900 flex-1">
               {project.title}

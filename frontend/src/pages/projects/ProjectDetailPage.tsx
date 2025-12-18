@@ -1,11 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useProjectDetails } from '@/features/projects';
-import { Loading, Alert, Button, Card, Container } from '@/shared/ui';
+import { Loading, Alert, Button, Card, Container, FileUpload, FileGallery } from '@/shared/ui';
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const projectId = Number(id);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   const { project, isLoading, error } = useProjectDetails(projectId);
 
@@ -78,7 +80,6 @@ export function ProjectDetailPage() {
             </h2>
             <div
               className="prose prose-sm max-w-none text-gray-700"
-              // TODO: VULNERABILITY Stored XSS - renders unsanitized project description
               dangerouslySetInnerHTML={{ __html: project.description }}
             />
           </div>
@@ -95,6 +96,17 @@ export function ProjectDetailPage() {
             </div>
           )}
         </Card>
+
+        <div className="space-y-6">
+          <FileGallery key={refreshKey} entityType="project" entityId={projectId} />
+          
+          <FileUpload 
+            entityType="project" 
+            entityId={projectId}
+            label="Upload Project Files"
+            onUploaded={() => setRefreshKey(prev => prev + 1)}
+          />
+        </div>
       </Container>
   );
 }

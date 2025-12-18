@@ -5,20 +5,25 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import Database from 'better-sqlite3';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
 import * as fs from 'fs';
 
 const SqliteStore = require('better-sqlite3-session-store')(session);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(path.join(__dirname, '..', 'public'), {
+    prefix: '/public/',
+  });
 
   app.enableCors({
     origin: [
       'http://localhost:5173',
       'http://localhost:5174',
       process.env.FRONTEND_URL,
-    ].filter(Boolean),
+    ].filter(Boolean) as string[],
     credentials: true,
   });
 
@@ -63,14 +68,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
-    .setTitle('Vulnerable Task Platform API')
-    .setDescription(
-      '⚠️ INTENTIONALLY VULNERABLE API for educational purposes.\n\n' +
-        'This API contains documented security vulnerabilities:\n' +
-        '- SQL Injection in login endpoint\n' +
-        '- And more vulnerabilities coming in Phase 3+\n\n' +
-        '🚫 DO NOT use in production or with real data.',
-    )
+    .setTitle('FreelancePro API')
+    .setDescription('API for FreelancePro platform')
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('users', 'User management')
@@ -82,10 +81,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
-    customSiteTitle: '⚠️ Vulnerable API Docs',
-    customCss: '.swagger-ui .topbar { background-color: #dc2626; }',
-  });
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

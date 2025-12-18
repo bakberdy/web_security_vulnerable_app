@@ -31,11 +31,11 @@ export class FilesController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      // TODO: VULNERABILITY Unsafe file upload - no MIME validation or filename sanitization
       storage: diskStorage({
         destination: './public/uploads',
         filename: (req, file, callback) => {
-          callback(null, file.originalname);
+          const uniqueName = `${Date.now()}-${file.originalname}`;
+          callback(null, uniqueName);
         },
       }),
     }),

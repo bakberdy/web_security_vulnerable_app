@@ -8,6 +8,7 @@ export { Alert } from './Alert'
 export { Loading } from './Loading'
 export { EmptyState } from './EmptyState'
 export { FileUpload } from './FileUpload'
+export { FileGallery } from './FileGallery'
 
 // Layout
 export { Container, Flex, Grid, Stack } from './layout'

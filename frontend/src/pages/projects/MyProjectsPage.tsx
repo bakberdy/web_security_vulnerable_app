@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useMyProjects } from '@/features/projects';
+import { useMyProjects, ProjectImagePreview } from '@/features/projects';
 import { Button, Card, Container, Heading, Loading, Text } from '@/shared/ui';
 
 export function MyProjectsPage() {
@@ -51,36 +51,42 @@ export function MyProjectsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {projects.map((project) => (
-            <Card key={project.id} className="p-4 space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <Heading level={4} className="text-lg">{project.title}</Heading>
-                  <Text color="muted" className="text-sm line-clamp-2">{project.description}</Text>
-                  <div className="flex items-center gap-3 text-sm text-gray-600">
-                    <span>${project.budget_min} - ${project.budget_max}</span>
-                    <span>•</span>
-                    <span>{project.duration_days} days</span>
+            <Card key={project.id} className="overflow-hidden">
+              <ProjectImagePreview 
+                projectId={project.id} 
+                className="aspect-video w-full bg-gray-100 object-cover"
+              />
+              <div className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <Heading level={4} className="text-lg">{project.title}</Heading>
+                    <Text color="muted" className="text-sm line-clamp-2">{project.description}</Text>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <span>${project.budget_min} - ${project.budget_max}</span>
+                      <span>•</span>
+                      <span>{project.duration_days} days</span>
+                    </div>
                   </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    project.status === 'open'
+                      ? 'bg-green-100 text-green-800'
+                      : project.status === 'in_progress'
+                        ? 'bg-blue-100 text-blue-800'
+                        : project.status === 'completed'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {project.status}
+                  </span>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  project.status === 'open'
-                    ? 'bg-green-100 text-green-800'
-                    : project.status === 'in_progress'
-                      ? 'bg-blue-100 text-blue-800'
-                      : project.status === 'completed'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {project.status}
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Button variant="secondary" className="flex-1" onClick={() => navigate(`/projects/${project.id}`)}>
-                  View
-                </Button>
-                <Button className="flex-1" onClick={() => navigate(`/projects/${project.id}/edit`)}>
-                  Edit
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button variant="secondary" className="flex-1" onClick={() => navigate(`/projects/${project.id}`)}>
+                    View
+                  </Button>
+                  <Button className="flex-1" onClick={() => navigate(`/projects/${project.id}/edit`)}>
+                    Edit
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}

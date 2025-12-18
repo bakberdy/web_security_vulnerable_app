@@ -3,7 +3,6 @@ import type { FileEntityType, FileRecord } from '@/entities/file';
 import { useFileUpload } from '@/shared/lib/useFileUpload';
 import { Button } from './Button';
 import { Card } from './Card';
-import { Alert } from './Alert';
 import { Text } from './typography';
 
 interface FileUploadProps {
@@ -32,14 +31,9 @@ export function FileUpload({ entityType, entityId, onUploaded, label = 'Upload f
 
   return (
     <Card className="p-4 space-y-3">
-      <Alert variant="warning">
-        Uploads are stored without validation and may allow unsafe content. Use demo files only.
-      </Alert>
-
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <Text className="text-sm font-medium text-gray-900">{label}</Text>
-          <Text color="muted" className="text-xs">Files are stored without validation for demo purposes.</Text>
         </div>
         <Button onClick={handleChoose} disabled={isUploading}>
           {isUploading ? 'Uploading…' : 'Choose file'}

@@ -31,7 +31,7 @@ export class GigsController {
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search gigs', description: 'Search and filter gigs (WARNING: Contains SQL injection vulnerability for educational purposes)' })
+  @ApiOperation({ summary: 'Search gigs', description: 'Search and filter gigs' })
   @ApiResponse({ status: 200, description: 'List of matching gigs' })
   async searchGigs(@Query() dto: SearchGigDto) {
     return this.gigsService.searchGigs(dto);
