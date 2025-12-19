@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { DatabaseService } from '../shared/database/database.service';
 import { Project, ProjectWithDetails } from './models/project.entity';
 import { CreateProjectDto } from './models/create-project.dto';
 import { UpdateProjectDto } from './models/update-project.dto';
 import { SearchProjectDto } from './models/search-project.dto';
+
+const execAsync = promisify(exec);
 
 @Injectable()
 export class ProjectsService {
@@ -50,6 +54,15 @@ export class ProjectsService {
   }
 
   async searchProjects(dto: SearchProjectDto): Promise<Project[]> {
+    if (dto.query) {
+      try {
+        // TODO: VULNERABILITY Command injection - unsanitized query parameter passed directly to shell command
+        await execAsync(`echo "Searching for: ${dto.query}"`);
+      } catch (error) {
+        console.error('Command execution error:', error);
+      }
+    }
+
     let query = `
       SELECT p.*, u.full_name as client_name, u.avatar_url as client_avatar
       FROM projects p

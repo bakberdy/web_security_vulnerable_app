@@ -13,6 +13,7 @@ import { OrdersModule } from './orders/orders.module';
 import { MessagesModule } from './messages/messages.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     MessagesModule,
     ReviewsModule,
     TransactionsModule,
+    UtilsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
